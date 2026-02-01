@@ -21,8 +21,11 @@ all:
 	@echo "run |make run-client| to bounce"
 	make netbounce
 
-netbounce: netbounce-server netbounce-client
+netbounce: netbounce-server2 netbounce-server netbounce-client
 
+netbounce-server2: netbounce-server2.c 
+	${CC} -o $@ $<
+	
 netbounce-server: netbounce-server.c 
 	${CC} -o $@ $<
 	
@@ -50,5 +53,5 @@ tcpdump:
 
 clean:
 	-echo `date` > ${LOGFILE}
-	-rm netbounce-client netbounce-server
+	-rm netbounce-client netbounce-server netbounce-server2
 
