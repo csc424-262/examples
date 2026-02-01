@@ -10,8 +10,8 @@ MACHINE = 54.81.57.81
 PORT = 3333
 IF = eth0
 
-LOGFILE= /var/www/ubuntu/project2/netbounce-log.txt
-LOGFILE= netbounce-log.txt
+LOGFILE= /var/www/ubuntu/netbounce-log.txt
+#LOGFILE= netbounce-log.txt
 
 all:
 	@echo "update MACHINE macro with server IP"
