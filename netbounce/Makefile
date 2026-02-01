@@ -40,6 +40,8 @@ run-server: netbounce-server
 
 run-server2: netbounce-server2
 	@echo Ready to bounce!
+	echo -n "<p><b>Running from hostname - </b>" >> ${LOGFILE}
+	/usr/bin/hostname >> ${LOGFILE}
 	./netbounce-server2 -lv -f ${LOGFILE} -p ${PORT}
 
 run-client: netbounce-client
