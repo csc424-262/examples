@@ -1,14 +1,16 @@
 
 
 NAME
-    netbounce-server, netbounce-client
+    netbounce-server2, netbounce-server, netbounce-client
     
 SYNOPSIS
 
     netbounce-client [-v] -p port -h host message
     
     netbounce-server [-vl] -p port
-    
+
+    netbounce-server2 [-vl] [-f log_file] -p port
+
 DESCRIPTION
 
     listener binds to the given UDP port, listens for a packet
@@ -25,11 +27,14 @@ DESCRIPTION
     
     The loop option (-l) will have the server listen repeated on the port.
     Else it exits after one bounce.
+
+    The logging option -f is available on netbounce-server2.
     
 BUGS
 
 
 LAST UPDATE
 
+    26 January 2026
     20 January 2012
     12 January 2016

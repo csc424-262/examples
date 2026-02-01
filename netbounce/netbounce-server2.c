@@ -24,7 +24,7 @@
 
 
 #define MAXBUFLEN 100
-#define USAGE_MSG "usage: %s [-lv] -p port\n"
+#define USAGE_MSG "usage: %s [-lv] [-f log_file] -p port\n"
 #define PROG_NAME "netbounce-server"  
  
 int main(int argc, char * argv[]) {
@@ -43,7 +43,7 @@ int main(int argc, char * argv[]) {
 	FILE * out_fn = NULL ;
 	time_t the_time ;
 			
-	while ((ch = getopt(argc, argv, "vp:l")) != -1) {
+	while ((ch = getopt(argc, argv, "vp:lf:")) != -1) {
 		switch(ch) {
 			case 'p':
 				port = atoi(optarg) ;
@@ -53,6 +53,9 @@ int main(int argc, char * argv[]) {
 				break ;
 			case 'l':
 				is_loop = 1 ;
+				break ;
+			case 'f':
+				out_file_name = strdup(optarg) ;
 				break ;
 			default:
 				printf(USAGE_MSG, PROG_NAME) ;
@@ -69,6 +72,20 @@ int main(int argc, char * argv[]) {
 	
 	assert(port) ;
 	
+	if (out_file_name) {
+		out_fn = fopen(out_file_name, "a");
+		if (!out_fn) {
+			perror("fopen") ;
+			exit(1) ;
+		}
+	}
+
+	if (out_fn) {
+		time(&the_time) ;
+		fprintf(out_fn,"%sserver starting ...", ctime(&the_time)) ;
+		fflush(out_fn) ;
+	}
+
 	if ((sockfd=socket(AF_INET,SOCK_DGRAM,0))==-1) {
 		perror("socket") ;
 		exit(1) ;
@@ -106,6 +123,14 @@ int main(int argc, char * argv[]) {
 			printf("packet contains \"%s\"\n", buf ) ;
 		}
 	
+		if (out_fn) {
+			/* repeat verbose to logging file */
+			fprintf(out_fn,"got packet from %s, port %d\n", inet_ntoa(their_addr.sin_addr), 
+					ntohs(their_addr.sin_port)) ;
+			fprintf(out_fn,"packet is %d bytes long\n", numbytes ) ;
+			fprintf(out_fn,"packet contains \"%s\"\n", buf ) ;
+			fflush(out_fn) ;
+		}
 		{
 		   /* return the packet to sender */
 			int bytes_sent ;
@@ -116,6 +141,10 @@ int main(int argc, char * argv[]) {
 			}
 			if ( is_verbose ) {
 				printf("packet sent, %d bytes\n", bytes_sent) ;
+			}
+			if (out_fn) {
+				fprintf(out_fn,"packet sent, %d bytes\n", bytes_sent) ;
+				fflush(out_fn) ;
 			}
 		}
 		
