@@ -6,7 +6,7 @@
 
 CC = gcc
 MACHINE = localhost
-MACHINE = 54.81.57.81
+MACHINE = 18.212.107.211
 PORT = 3333
 IF = eth0
 
@@ -21,14 +21,17 @@ all:
 
 netbounce: netbounce-server2 netbounce-server netbounce-client
 
-netbounce-server2: netbounce-server2.c 
-	${CC} -o $@ $<
+netbounce-server2: netbounce-server2.c foo-socket.o
+	${CC} -o $@ $< foo-socket.o
 	
 netbounce-server: netbounce-server.c 
 	${CC} -o $@ $<
 	
 netbounce-client: netbounce-client.c 
 	${CC} -o $@ $<
+
+foo-socket.o: foo-socket.c foo-socket.h
+	cc -c -o $@ $<
 	
 test:
 	@echo In one window, make run-server
@@ -57,5 +60,5 @@ tcpdump:
 
 clean:
 	-echo `date` > ${LOGFILE}
-	-rm netbounce-client netbounce-server netbounce-server2
+	-rm netbounce-client netbounce-server netbounce-server2 foo-socket.o
 

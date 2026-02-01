@@ -22,11 +22,14 @@
 
 #include<time.h> // in the include section
 
+#include "foo-socket.h"
 
 #define MAXBUFLEN 100
 #define USAGE_MSG "usage: %s [-lv] [-f log_file] -p port\n"
 #define PROG_NAME "netbounce-server"  
  
+int verbose_g = 0 ;
+
 int main(int argc, char * argv[]) {
 	int sockfd;
 	struct sockaddr_in my_addr;
