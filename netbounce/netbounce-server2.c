@@ -1,12 +1,13 @@
 /*
-** netbounce-server.c
-** from Beej's Guide to Network Programming: Using Unix Sockets, 
-** by Brian "Beej" Hall.
 **
-** modified by Burt Rosenberg, 
-** Created: Feb 8, 2009
-** Last modified: Jan 31, 2015 - added comment about mild bug if received data is binary -bjr
-**      Jan 12, 2016 - add getopt
+** name: netbounce-server2.c
+**
+** the amazing net-bounce, now with foo-sockets
+**
+** last-modified:
+**     08 feb 2009 -bjr created
+**     01 feb 2026 -bjr migrated to foo-socket's
+**
 */
 
 #include<stdio.h>
@@ -18,47 +19,52 @@
 #include<sys/socket.h>
 #include<netinet/in.h>
 #include<arpa/inet.h>
+#include<arpa/inet.h>
+#include<netdb.h>
+#include<time.h>
 #include<assert.h>
-
-#include<time.h> // in the include section
 
 #include "foo-socket.h"
 
-#define MAXBUFLEN 100
-#define USAGE_MSG "usage: %s [-lv] [-f log_file] -p port\n"
-#define PROG_NAME "netbounce-server"  
- 
+#define USAGE_MSG "usage: %s [-lv] -p port\n"
+#define PROG_NAME "netbounce-server2"  
+#define LOCALHOST "localhost"
+#define MAXMSGLEN 2048
+#define N_REPEAT_DEFAULT 1
+
 int verbose_g = 0 ;
 
+char * hostname_to_ipstring(char * host) {
+	// the returned result must be used immediately, as it is a static
+	// inside the gethostbyname static variables block
+	struct hostent * he ;
+	if ((he=gethostbyname(host))==NULL) {
+		//perror("gethostbyname") ;
+		printf("error: no such host %s\n", host ) ;
+		exit(1) ;
+	}
+	return inet_ntoa(*((struct in_addr *)he->h_addr)) ;
+}
+
 int main(int argc, char * argv[]) {
-	int sockfd;
-	struct sockaddr_in my_addr;
-	struct sockaddr_in their_addr;
+
 	unsigned int addr_len, numbytes;
-	char buf[MAXBUFLEN];
+	char buf[MAXMSGLEN];
 	int ch ;
-	int is_verbose = 0 ;
 	int port = 0 ;
 	int is_loop = 0 ;
+	struct FooSocket * sock ;
 
-	// in the variable declaration section
-	char * out_file_name = NULL ;
-	FILE * out_fn = NULL ;
-	time_t the_time ;
-			
-	while ((ch = getopt(argc, argv, "vp:lf:")) != -1) {
+	while ((ch = getopt(argc, argv, "vp:l")) != -1) {
 		switch(ch) {
 			case 'p':
 				port = atoi(optarg) ;
 				break ;
 			case 'v':
-				is_verbose = 1 ;
+				verbose_g += 1 ;
 				break ;
 			case 'l':
 				is_loop = 1 ;
-				break ;
-			case 'f':
-				out_file_name = strdup(optarg) ;
 				break ;
 			default:
 				printf(USAGE_MSG, PROG_NAME) ;
@@ -67,93 +73,34 @@ int main(int argc, char * argv[]) {
 	}
 	argc -= optind;
 	argv += optind;
-	
+
 	if ( !port ) {
 		printf(USAGE_MSG, PROG_NAME) ;
 		return 0 ;
 	}
-	
+
 	assert(port) ;
-	
-	if (out_file_name) {
-		out_fn = fopen(out_file_name, "a");
-		if (!out_fn) {
-			perror("fopen") ;
-			exit(1) ;
-		}
-	}
-
-	if (out_fn) {
-		time(&the_time) ;
-		fprintf(out_fn,"%sserver starting ...", ctime(&the_time)) ;
-		fflush(out_fn) ;
-	}
-
-	if ((sockfd=socket(AF_INET,SOCK_DGRAM,0))==-1) {
-		perror("socket") ;
-		exit(1) ;
-	}
-	
-	my_addr.sin_family = AF_INET ;
-	my_addr.sin_port = htons((short)port) ;
-	my_addr.sin_addr.s_addr = INADDR_ANY ;
-	memset(&(my_addr.sin_zero),'\0',8) ;
-
-	if (bind(sockfd, (struct sockaddr *)&my_addr, 
-		sizeof(struct sockaddr)) == -1 ) {
-		perror("bind") ;
-		exit(1) ;
-	}
+	sock = create_foo_socket(port) ;
 
 	while (1==1 ) { /* while forever */
 
-		addr_len = sizeof(struct sockaddr) ;
-		if ((numbytes=recvfrom(sockfd, buf, MAXBUFLEN-1,0,
-			(struct sockaddr *)&their_addr, &addr_len)) == -1 ) {
-			perror("recvfrom") ;
-			exit(1) ;
-		}
+		numbytes = socket_recvfrom(sock, buf, MAXMSGLEN-1) ;
 		// assume can be a string, and terminate
 		buf[numbytes] = '\0' ;
-	
-		if ( is_verbose ) {
-			/* added to get source port number */
-			printf("got packet from %s, port %d\n", inet_ntoa(their_addr.sin_addr), 
-					ntohs(their_addr.sin_port)) ;
-			printf("packet is %d bytes long\n", numbytes ) ;
-			
-			/* Mild bug: if the incoming data was binary, the "string" might be less than numbytes long */
-			printf("packet contains \"%s\"\n", buf ) ;
-		}
-	
-		if (out_fn) {
-			/* repeat verbose to logging file */
-			fprintf(out_fn,"got packet from %s, port %d\n", inet_ntoa(their_addr.sin_addr), 
-					ntohs(their_addr.sin_port)) ;
-			fprintf(out_fn,"packet is %d bytes long\n", numbytes ) ;
-			fprintf(out_fn,"packet contains \"%s\"\n", buf ) ;
-			fflush(out_fn) ;
-		}
-		{
-		   /* return the packet to sender */
-			int bytes_sent ;
-			if ((bytes_sent = sendto( sockfd, buf, strlen(buf), 0,
-					(struct sockaddr *)&their_addr, sizeof(struct sockaddr)))==-1 ) {
-				perror("send") ;
-				exit(1) ;
-			}
-			if ( is_verbose ) {
-				printf("packet sent, %d bytes\n", bytes_sent) ;
-			}
-			if (out_fn) {
-				fprintf(out_fn,"packet sent, %d bytes\n", bytes_sent) ;
-				fflush(out_fn) ;
-			}
-		}
-		
+
+		printf("got packet from %s, port %d\n", 
+				inet_ntoa(sock->replyto_addr->sin_addr), 
+				ntohs(sock->replyto_addr->sin_port)) ;
+		printf("packet is %d bytes long\n", numbytes ) ;
+		/* Mild bug: if the incoming data was binary, the "string" might be less than numbytes long */
+		printf("packet contains \"%s\"\n", buf ) ;
+
+		numbytes = socket_replyto(sock, buf, numbytes) ;
+		printf("packet sent, %d bytes\n", numbytes) ;
+
+		fflush(NULL) ;
 		if ( !is_loop ) break ;
 	}
 
-	close(sockfd) ;
 	return 0 ;
 }

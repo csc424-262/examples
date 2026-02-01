@@ -1,25 +1,39 @@
 #
-# makefile for csc424-242 project 2
-# Feb 08, 2024
-# bjr
+# makefile for csc424-242 netbounce project
+#
+# author: bjr
+# last-update:
+#     Feb 08, 2024
+#     Feb 01, 2026
 #
 
-CC = gcc
-MACHINE = localhost
-MACHINE = 18.212.107.211
-PORT = 3333
-IF = eth0
 
-LOGFILE= /var/www/ubuntu/netbounce-log.txt
-#LOGFILE= netbounce-log.txt
+H= localhost
+#MH = 18.212.107.211
+PORT = 3333
+#LOGFILE= /var/www/ubuntu/netbounce-log.txt
+LOGFILE= netbounce-log.txt
+#LOGFILE= /dev/null
+
+CC = gcc
 
 all:
-	@echo "update MACHINE macro with server IP"
-	@echo "run |make run-server| to start server"
-	@echo "run |make run-client| to bounce"
-	make netbounce
+	@echo "simple use:"
+	@echo "  1) set the H macro"
+	@echo "  2) make run-server2"
+	@echo "  3) make run-client (other window)"
+	@echo "make targets: "
+	@echo "  compile"
+	@echo "  run-server2"
+	@echo "  run-server2-weblog"
+	@echo "  run-client"
+	@echo "  clean"
+	@echo "macros:"
+	@echo "  H=$H"
+	@echo "  LOGFILE=${LOGFILE}"
 
-netbounce: netbounce-server2 netbounce-server netbounce-client
+
+compile: netbounce-server2 netbounce-server netbounce-client
 
 netbounce-server2: netbounce-server2.c foo-socket.o
 	${CC} -o $@ $< foo-socket.o
@@ -34,21 +48,22 @@ foo-socket.o: foo-socket.c foo-socket.h
 	cc -c -o $@ $<
 	
 test:
-	@echo In one window, make run-server
+	@echo In one window, make run-server2
 	@echo Then, in another window, make run-client
-	
-run-server: netbounce-server
-	@echo Ready to bounce!
-	./netbounce-server -lv -p ${PORT} $F
 
 run-server2: netbounce-server2
 	@echo Ready to bounce!
-	echo -n "<p><b>Running from hostname - </b>" >> ${LOGFILE}
-	/usr/bin/hostname >> ${LOGFILE}
-	./netbounce-server2 -lv -f ${LOGFILE} -p ${PORT}
+	./netbounce-server2 -l -p ${PORT}
 
 run-client: netbounce-client
-	./netbounce-client -h ${MACHINE} -p ${PORT} -v  "The amazing net bounce!"
+	./netbounce-client -h $H -p ${PORT} -v  "The amazing net bounce!"
+
+run-server2-weblog: netbounce-server2
+	@echo Ready to bounce!
+	touch ${LOGFILE}
+	echo -n "<p><b>Running from hostname - </b>" >> ${LOGFILE}
+	/bin/hostname >> ${LOGFILE}
+	./netbounce-server2 -l -p ${PORT} >> ${LOGFILE}
 
 find-pid:
 	@echo problem- bind: Address already in use
@@ -59,6 +74,6 @@ tcpdump:
 	sudo tcpdump -i ${IF} -x udp port ${PORT}
 
 clean:
-	-echo `date` > ${LOGFILE}
 	-rm netbounce-client netbounce-server netbounce-server2 foo-socket.o
+	-rm ${LOGFILE}
 
