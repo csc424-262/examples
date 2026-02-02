@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>
-My Webserver
+Netbounce Responder
 </title>
 
 <style type="text/css">
@@ -28,7 +28,7 @@ My Webserver
 </head>
 <body style="padding:2em;font-family:Verdana,sans-serif;width:85%;">
 
-<h2 style="border-bottom:orange thin solid;">Netbounce Logging Project</h2>
+<h2 style="border-bottom:orange thin solid;">Netbounce Responder</h2>
 <h4>
 Name: csc424 edition 262
 <br>

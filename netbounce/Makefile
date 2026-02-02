@@ -8,12 +8,11 @@
 #
 
 
-H= localhost
-#MH = 18.212.107.211
+#H= localhost
+H= 18.212.107.211
 PORT = 3333
-#LOGFILE= /var/www/ubuntu/netbounce-log.txt
-LOGFILE= netbounce-log.txt
-#LOGFILE= /dev/null
+#LOGFILE= netbounce-log.txt
+LOGFILE= /var/www/ubuntu/netbounce-log.txt
 
 CC = gcc
 
@@ -37,9 +36,6 @@ compile: netbounce-server2 netbounce-server netbounce-client
 
 netbounce-server2: netbounce-server2.c foo-socket.o
 	${CC} -o $@ $< foo-socket.o
-	
-netbounce-server: netbounce-server.c 
-	${CC} -o $@ $<
 	
 netbounce-client: netbounce-client.c 
 	${CC} -o $@ $<
@@ -74,6 +70,6 @@ tcpdump:
 	sudo tcpdump -i ${IF} -x udp port ${PORT}
 
 clean:
-	-rm netbounce-client netbounce-server netbounce-server2 foo-socket.o
+	-rm netbounce-client netbounce-server2 foo-socket.o
 	-rm ${LOGFILE}
 
