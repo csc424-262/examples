@@ -37,6 +37,9 @@ compile: netbounce-server2 netbounce-server netbounce-client
 netbounce-server2: netbounce-server2.c foo-socket.o
 	${CC} -o $@ $< foo-socket.o
 	
+netbounce-server: netbounce-server.c
+	${CC} -o $@ $< 
+	
 netbounce-client: netbounce-client.c 
 	${CC} -o $@ $<
 
@@ -70,6 +73,7 @@ tcpdump:
 	sudo tcpdump -i ${IF} -x udp port ${PORT}
 
 clean:
+	-rm netbounc-server
 	-rm netbounce-client netbounce-server2 foo-socket.o
 	-rm ${LOGFILE}
 
