@@ -73,7 +73,7 @@ tcpdump:
 	sudo tcpdump -i ${IF} -x udp port ${PORT}
 
 clean:
-	-rm netbounc-server
+	-rm netbounce-server
 	-rm netbounce-client netbounce-server2 foo-socket.o
 	-rm ${LOGFILE}
 
