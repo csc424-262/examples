@@ -27,7 +27,7 @@
 #include "foo-socket.h"
 
 #define USAGE_MSG "usage: %s [-lv] -p port\n"
-#define PROG_NAME "netbounce-server2"  
+#define PROG_NAME "netbounce-server-foo"  
 #define LOCALHOST "localhost"
 #define MAXMSGLEN 2048
 #define N_REPEAT_DEFAULT 1
