@@ -15,3 +15,5 @@ This repository preserves that example and its evolution into my own
 - [FooSockets library](foo-socket-man.txt)
 
 a small abstraction over the socket interface intended to simplify network programming for students.
+
+(It's all about the Foo!)
