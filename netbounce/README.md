@@ -11,6 +11,7 @@ by Brian "Beej" Hall.
 ## FooSockets
 
 This repository preserves that example and its evolution into my own 
-- [FooSockets library](foo-socket-man.txt),
+
+- [FooSockets library](foo-socket-man.txt)
 
 a small abstraction over the socket interface intended to simplify network programming for students.
