@@ -1,6 +1,4 @@
-# Netbounce Classic
-
-**A first trip on the information highway.**
+## Netbounce Classic
 
 Netbounce Classic is a small client-server networking exercise, 
 originally developed in 2013 from examples 
