@@ -1,12 +1,9 @@
-
-
 NAME
     create_foo_socket, socket_sendto, socket_recvfrom, 
     socket_replyto, create_session_socket
     
  
 SYNOPSIS
-
     #include "foo-socket.h"
 
     struct FooSocket * 
@@ -44,7 +41,6 @@ DESCRIPTION
     bound to a sender after a socket_recvfrom.
 
 BUGS
-
 
 LAST UPDATE
     01 February 2026
