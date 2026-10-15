@@ -10,6 +10,7 @@
 **		31 jan 2023 -bjr; simplified as Foo for netbounce
 **		05 mar 2024 -bjr; added create session socket
 **		01 feb 2026 -bjr; updated comments
+**		15 feb 2026 -bjr; added socket_recvfrom parameter time_out
 **
 */
 
@@ -24,7 +25,7 @@
  *    given a bound FooSocket sock, receive bytes and copy to buffer, up to buffersize; 
  *    and sets the foo socket's replyto_addr to the sender's IP and port
  *
- * socket_replyto(sock, message, message_length): 
+ * socket_replyto(sock, message, message_length, time_out_seconds): 
  *    sends message of message_length to replyto_addr. 
  *
  * create_session_socket(struct FooSocket * sock_listen): 
@@ -43,6 +44,7 @@
 #include<sys/socket.h>
 #include<netinet/in.h>
 #include<arpa/inet.h>
+#include<sys/time.h>
 
 #include "foo-socket.h"
 
@@ -71,9 +73,7 @@ void its_all_about_the_foo(void) {
 
 struct FooSocket * create_foo_socket(int port) {
 
-	/*
-	 * if port==0, socket binds to an ephemeral port
-	 */
+	// if port==0, socket binds to an ephemeral port
 	 
 	int fd ;
 	struct sockaddr_in sa_i ;
@@ -164,11 +164,14 @@ int socket_sendto(struct FooSocket * sock, char * host, int port, char * buf, in
 	return numbytes ;
 }
 
-int socket_recvfrom( struct FooSocket * sock, char * buf, int buf_len) {
+int socket_recvfrom( struct FooSocket * sock, char * buf, int buf_len, int time_out) {
 	unsigned int addr_len, numbytes;
 	struct sockaddr_in * sa_i = sock->replyto_addr ;
 	struct sockaddr_in my_addr ;
 
+	// no timeout if time_out==0
+	// else (to be implemented) time out in time_out seconds
+	
 	addr_len = sizeof(struct sockaddr_in) ;
 	numbytes = recvfrom(sock->sockfd, buf, buf_len, 0, (struct sockaddr *) sock->replyto_addr, &addr_len) ;
 	if (numbytes == -1 ) {

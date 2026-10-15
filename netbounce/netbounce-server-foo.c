@@ -84,7 +84,7 @@ int main(int argc, char * argv[]) {
 
 	while (1==1 ) { /* while forever */
 
-		numbytes = socket_recvfrom(sock, buf, MAXMSGLEN-1) ;
+		numbytes = socket_recvfrom(sock, buf, MAXMSGLEN-1, 0) ;
 		// assume can be a string, and terminate
 		buf[numbytes] = '\0' ;
 

@@ -27,9 +27,8 @@ void print_hex_line(char * buffer, int n) ;
 void its_all_about_the_foo(void) ;
 
 struct FooSocket * create_foo_socket(int port) ;
-
 int socket_sendto(struct FooSocket * sock, char * host, int port, char * buf, int msg_len) ;
-int socket_recvfrom( struct FooSocket * sock, char * buf, int buf_len) ;
+int socket_recvfrom( struct FooSocket * sock, char * buf, int buf_len, int time_out) ;
 int socket_replyto(struct FooSocket * sock, char * buf, int msg_len) ;
 struct FooSocket * create_session_socket(struct FooSocket * sock_listen) ;
 
