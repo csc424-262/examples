@@ -5,7 +5,8 @@ originally developed in 2013 from examples
 in [Beej's Guide to Network Programming](https://beej.us/guide/bgnet/)
 by Brian "Beej" Hall.
 
-[Netbounce — the original project page](https://www.cs.miami.edu/home/burt/learning/Csc424.172/workbook/netbounce.html)
+[Netbounce — the original project page](https://www.cs.miami.edu/home/burt/learning/Csc524.132/workbook/netbounce.html)
+[Netbounce — renamed Classic](https://www.cs.miami.edu/home/burt/learning/Csc424.172/workbook/netbounce.html)
 
 ## FooSockets
 
