@@ -1,0 +1,50 @@
+
+
+NAME
+    create_foo_socket, socket_sendto, socket_recvfrom, 
+    socket_replyto, create_session_socket
+    
+ 
+SYNOPSIS
+
+    #include "foo-socket.h"
+
+    struct FooSocket * 
+    create_foo_socket(int port) ;
+    
+    int 
+    socket_sendto(struct FooSocket * foo_sock, char * host, int port, char * message, int msg_len) ;
+
+    int 
+    socket_recvfrom( struct FooSocket * foo_sock, char * buf, int buf_len, int time_out) ;
+
+    int
+    socket_replyto(struct FooSocket * foo_sock, char * message, int buf_len) ;
+
+    struct FooSocket * 
+    create_session_socket(struct FooSocket * sock_listen) ;
+
+DESCRIPTION
+    The create_foo_socket returns a struct FooSocket * representing a newly
+    opened socket. If a non-zero port is given, the socket is bound to that port.
+    Else the socket is bound to an ephemeral port.
+    
+    The socket_sendto sends the message on the foo_socket to host:port.
+    
+    The socket_recvfrom receives into buf from the foo_socket up to buf_len bytes,
+    returning the number of bytes received. The foo_socket binds to the packet 
+    source for the purpose of socket_replyto. If time_out is 0, there is no 
+    timeout on the socket. Else it is the postive seconds to time out.
+    On timeout, return -1.
+    
+    The socket_replyto sends the message in reply to the sender of the previous 
+    socket_recv_from. 
+    
+    The create_session_socket returns a new foo_socket, a clone of the foo_sock
+    bound to a sender after a socket_recvfrom.
+
+BUGS
+
+
+LAST UPDATE
+    01 February 2026
